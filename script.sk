@@ -1,1 +1,43 @@
-Bonjour
+#--Skript created by Ben--
+#--Version: 0.1 (in dev)
+on skript load:
+    send "&2CitizenJobs &floaded!" to console
+
+on load:
+    load yaml "plugins/citizenjobs/config.yml" as "config"
+    set {_header::*} to "CITIZENJOBS" and "Version: 0.1"
+    set the comments at the top of "config" to {_header::*}
+    delete  the comments at the top of "config"
+    set yaml value "config-npc.name" from "config" to "X"
+    set {_com1::*} to "Utilisez /namejob en jeu" and "Ne changez pas ce paramètre ici."
+    set the comments of yaml node "config-npc.name" from "config" to {_com1::*}
+    delete the comments of yaml node "config-npc.name" from "config"
+    set yaml list "jobs.name" from "config" to "Metier Example"
+    save yaml "config"
+
+command /addjob <text>:
+    trigger:
+        set {_list::*} to yaml list "jobs.name" from "config"
+        add arg-1 to {_list::*}
+        set yaml list "jobs.name" from "config" to {_list::*}
+        save yaml "config"
+        send message "Done!" to player
+
+command /remove <text>:
+    trigger:
+        delete yaml list "jobs name.%arg-1%" from "config"
+        save yaml "config"
+        send message "Done!" to player
+
+command /namejob:
+    trigger:
+        if target of player is a entity:
+            set {_npcname::*} to entity's target
+            send "&2Votre NPC s'appel désormais %{npcname}%" to player
+            set yaml value "config-npc.name" from "config" to "%{_npcname::*}%"
+        else:
+            send "&cRegardez votre NPC." to player
+
+on right click on entity:
+    if entity's name is "%{_npcname::*}%":
+        send " ♥ " to player
